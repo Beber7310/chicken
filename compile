@@ -1,0 +1,1 @@
+gcc http.c chicken.c -o chicken -lpthread

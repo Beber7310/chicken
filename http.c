@@ -34,7 +34,8 @@
 #define HTTP_THERMOSTAT 		"hc_thermostat"
 #define HTTP_MQTT_TEMP 		    "hc_mqtt_temp"
 
- 
+extern int http_hold; 
+extern pthread_mutex_t mutex ;
 
 /* affiche un message d'erreur, errno et quitte */
 void fatal_error(const char* msg)
@@ -374,18 +375,28 @@ int parse_http_cmd_token(char* cmd)
 	if (strcmp("open", cmd) == 0)
 	{
 		printf("open\n");
+		pthread_mutex_lock(&mutex);
 		system("./openChicken");
+		http_hold=60;
+		pthread_mutex_unlock(&mutex);
+
 	}
 
 	if (strcmp("close", cmd) == 0)
 	{
 		printf("close\n");
+		pthread_mutex_lock(&mutex);
 		system("./closeChicken");
+		http_hold=60;
+		pthread_mutex_unlock(&mutex);
 	}
 	if (strcmp("stop", cmd) == 0)
 	{
 		printf("stop\n");
+		pthread_mutex_lock(&mutex);
 		system("./stopChicken");
+		http_hold=60;
+		pthread_mutex_unlock(&mutex);
 	}
 
 	

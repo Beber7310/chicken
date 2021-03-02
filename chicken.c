@@ -6,6 +6,9 @@
 
 void * http_loop(void * arg);
 
+int http_hold=0;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
 int main(void)
 { 
 
@@ -67,21 +70,26 @@ int main(void)
 		break;
 		
 	}
- 
 	
-	if((hour==openHour)&&(minute==openMinute))
+	pthread_mutex_lock(&mutex);
+	if(http_hold<1)
 	{
-		system("./openChicken");
+		if((hour==openHour)&&(minute==openMinute))
+		{
+			system("./openChicken");
+		}
+		else if((hour==closeHour)&&(minute==closeMinute))
+		{
+			system("./closeChicken");
+		}
+		else
+		{
+			system("./stopChicken");
+		}
+	}else{		
+		http_hold--;		
 	}
-	else if((hour==closeHour)&&(minute==closeMinute))
-	{
-		system("./closeChicken");
-	}
-	else
-	{
-		system("./stopChicken");
-	}
-		
+	pthread_mutex_unlock(&mutex);
 	
 	
     }
